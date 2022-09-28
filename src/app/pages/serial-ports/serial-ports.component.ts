@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
-
 @Component({
   selector: 'app-serial-ports',
   templateUrl: './serial-ports.component.html',
@@ -12,10 +11,11 @@ export class SerialPortsComponent implements OnInit {
   constructor(private _electonService: ElectronService) { }
 
   ngOnInit(): void {
-    
+
   }
 
   public async requestDevice(): Promise<void> {
-
+    const usb = window.require('usb')
+    this.devices = usb.getDeviceList()
   }
 }
