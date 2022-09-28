@@ -1,14 +1,20 @@
 {
   "name": "electron-angular-test-project",
   "version": "0.0.0",
-  "main" : "main.js",
+  "main": "main.js",
+  "browser": {
+    "fs": false,
+    "os": false,
+    "path": false,
+    "util": false
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "electron": "ng build && electron ."
+    "electron": "ng build --configuration development && electron ."
   },
   "private": true,
   "dependencies": {
@@ -20,6 +26,7 @@
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
+    "ngx-electron": "2.2.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
@@ -29,7 +36,8 @@
     "@angular/cli": "~14.2.3",
     "@angular/compiler-cli": "^14.2.0",
     "@types/jasmine": "~4.0.0",
-    "electron": "^21.0.0",
+    "@types/node": "^18.7.23",
+    "electron": "13.6.6",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",

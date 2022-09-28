@@ -1,0 +1,7 @@
+<p>serial-ports works!</p>
+<button (click)="requestDevice()">request device</button>
+<div class="serial-ports__devices">
+    <div *ngFor="let device of devices" class="devices__item">
+        <span>{{device | json}}</span>
+    </div>
+</div>

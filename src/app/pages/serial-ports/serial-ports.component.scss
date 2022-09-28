@@ -1,0 +1,14 @@
+.serial-ports {
+  &__devices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.devices {
+    &__item {
+        display: flex;
+        gap: 8px;
+    }
+}

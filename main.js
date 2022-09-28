@@ -11,7 +11,6 @@ const createWindow = () => {
         webPreferences: {
             contextIsolation: false, // allow use with Electron 12+
             nodeIntegration: true, // to allow require
-            preload: path.join(__dirname, 'preload.js')
         }
     })
 
