@@ -20,11 +20,10 @@
     "@angular/platform-browser": "^14.2.0",
     "@angular/platform-browser-dynamic": "^14.2.0",
     "@angular/router": "^14.2.0",
-    "@types/usb": "^2.0.5",
     "ngx-electron": "2.2.0",
     "rxjs": "~7.5.0",
+    "serialport": "^10.4.0",
     "tslib": "^2.3.0",
-    "usb": "^2.5.2",
     "zone.js": "~0.11.4"
   },
   "devDependencies": {

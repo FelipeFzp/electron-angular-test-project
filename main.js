@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const url = require('url');
 const path = require('path')
 
@@ -9,9 +9,8 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            contextIsolation: true, // any electron api required by webpage need to be exposed on preload.js
+            contextIsolation: false, // expose entire electron api on window variable on renderer process
             nodeIntegration: true, // to allow require
-            preload: path.join(__dirname, 'preload.js')
         }
     })
 
@@ -51,3 +50,28 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+ipcMain.on('get-device-list', async function (event, arg) {
+    console.log('get-device-list')
+
+    try {
+        const { SerialPort } = require('serialport')
+        const ports = await SerialPort.list()
+        // const port = new SerialPort({
+        //     path: arg,
+        //     baudRate: 9600,
+        // })
+        // let i = 0
+        // setInterval(() => {
+        //     port.write('Test: ' + i)
+        //     i = i+1
+        // }, 2000)
+        
+        event.returnValue = JSON.stringify(ports);
+        return;
+    } catch (error) {
+        event.returnValue = JSON.stringify(error);
+    }
+
+    // const usb = require('usb')
+    // const devices = usb.getDeviceList()
+})
