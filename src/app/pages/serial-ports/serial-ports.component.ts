@@ -1,26 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ElectronService } from 'ngx-electron';
+import { PortInfo } from '@serialport/bindings-cpp'
 @Component({
   selector: 'app-serial-ports',
   templateUrl: './serial-ports.component.html',
   styleUrls: ['./serial-ports.component.scss']
 })
-export class SerialPortsComponent implements OnInit {
-  public response: string = '';
+export class SerialPortsComponent implements OnInit, OnDestroy {
+  public devices: PortInfo[] = [];
+  public connectedDevicePath?: string;
+
+  private _listPortsIntervalId?: number;
 
   constructor(private _electronService: ElectronService) { }
 
   ngOnInit(): void {
-     
+    this._listPortsIntervalId = setInterval(async () => {
+      this.devices = await this._getDevices();
+      console.log('this.devices', this.devices)
+    }, 1000) as unknown as number
   }
 
-  public async requestDevice(portPath: string): Promise<void> {
-    // Access electron apis on rederer process:
-    const { SerialPort } = window.require('serialport')
-    this.response = JSON.stringify(await SerialPort.list())
-    
-    // Run the same code above but in main process:
-    // const response = this._electronService.ipcRenderer.sendSync('get-device-list', portPath)
-    // this.response = response
+  public async connectTo(portPath: string): Promise<void> {
+    this.connectedDevicePath = await this._electronService
+      .ipcRenderer
+      .invoke('connect', portPath)
+  }
+
+  public async disconnect(): Promise<void> {
+    this.connectedDevicePath = await this._electronService
+      .ipcRenderer
+      .invoke('disconnect', this.connectedDevicePath)
+  }
+
+  public async writeToDevice(data: string): Promise<void> {
+    await this._electronService
+    .ipcRenderer
+    .invoke('write', data)
+  }
+
+  private async _getDevices(): Promise<PortInfo[]> {
+    return await this._electronService
+      .ipcRenderer
+      .invoke('getDeviceList');
+  }
+
+  ngOnDestroy(): void {
+    if(!this._listPortsIntervalId)
+      return;
+
+    clearInterval(this._listPortsIntervalId);
   }
 }

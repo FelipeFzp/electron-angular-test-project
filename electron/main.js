@@ -1,7 +1,11 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const url = require('url');
-const path = require('path')
+const path = require('path');
+const fs = require('fs');
+
+const args = process.argv.slice(1);
+const serve = args.some(val => val === '--serve');
 
 const createWindow = () => {
     // Create the browser window.
@@ -9,20 +13,22 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            contextIsolation: false, // expose entire electron api on window variable on renderer process
+            contextIsolation: false, // Do not expose entire electron api on window variable on renderer process
             nodeIntegration: true, // to allow require
         }
     })
 
-    // and load the index.html of the app.
-    const angularMainFileUrl = url.format({
-        pathname: path.join(
-            __dirname,
-            'dist/electron-angular-test-project/index.html'),
-        protocol: 'file:',
-        slashes: true
-    });
-    mainWindow.loadURL(angularMainFileUrl)
+    serve ?
+        //load the index.html file
+        mainWindow.loadURL('http://localhost:4200/') :
+        //or load the local index.html file
+        mainWindow.loadURL(url.format({
+            pathname: path.join(
+                __dirname,
+                '../dist/electron-angular-test-project/index.html'),
+            protocol: 'file:',
+            slashes: true
+        }))
 
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
@@ -50,28 +56,15 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-ipcMain.on('get-device-list', async function (event, arg) {
-    console.log('get-device-list')
 
-    try {
-        const { SerialPort } = require('serialport')
-        const ports = await SerialPort.list()
-        // const port = new SerialPort({
-        //     path: arg,
-        //     baudRate: 9600,
-        // })
-        // let i = 0
-        // setInterval(() => {
-        //     port.write('Test: ' + i)
-        //     i = i+1
-        // }, 2000)
-        
-        event.returnValue = JSON.stringify(ports);
-        return;
-    } catch (error) {
-        event.returnValue = JSON.stringify(error);
-    }
-
-    // const usb = require('usb')
-    // const devices = usb.getDeviceList()
-})
+// Require dinamically all IPC listeners 
+const ipcListenersFolderPath = path.join(__dirname, 'ipc-listeners')
+fs.readdir(ipcListenersFolderPath, (err, files) => {
+    if (err) { return console.error('Unable to scan directory: ' + err); } 
+    
+    //listing all files using forEach
+    files.forEach((file) => {
+        console.info(`[electron/main.js] (${file}) Requiring IPC listener to main process`)
+        require(path.join(ipcListenersFolderPath, file))
+    });
+});

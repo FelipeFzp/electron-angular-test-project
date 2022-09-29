@@ -1,5 +1,22 @@
 <p>serial-ports works!</p>
-<input #portPath type="text" placeholder="Port path">
-<button (click)="requestDevice(portPath.value)">request device</button>
 <br>
-<span>{{response}}</span>
+<div style="display: flex; flex-direction: column; gap: 12px;">
+    <ol>
+        <li *ngFor="let device of devices">
+            {{device.path}}
+        </li>
+    </ol>
+</div>
+
+<div *ngIf="devices.length > 0">
+    <input #portPath type="text" placeholder="Port path">
+    <button (click)="connectedDevicePath ? disconnect() : connectTo(portPath.value)">
+        {{ connectedDevicePath ? ('Disconnect from ' + connectedDevicePath): 'Connect to device' }}
+    </button>
+</div>
+
+<div *ngIf="devices.length > 0">
+    <input #writeData type="text" placeholder="Data to write">
+    <button (click)="writeToDevice(writeData.value)">Write</button>
+</div>
+

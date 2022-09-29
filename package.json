@@ -1,14 +1,15 @@
 {
   "name": "electron-angular-test-project",
   "version": "0.0.0",
-  "main": "main.js",
+  "main": "electron/main.js",
   "scripts": {
+    "start": "npm run ng:build && npm run electron",
+    "dev": "npm-run-all -p ng:serve electron:serve",
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "electron": "ng build --configuration development && electron ."
+    "ng:build": "ng build",
+    "ng:serve": "ng s",
+    "electron": "electron .",
+    "electron:serve": "wait-on tcp:4200 && electron . --serve"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +33,7 @@
     "@angular/compiler-cli": "^14.2.0",
     "@types/jasmine": "~4.0.0",
     "@types/node": "^18.7.23",
+    "concurrently": "^7.4.0",
     "electron": "13.6.6",
     "jasmine-core": "~4.3.0",
     "karma": "~6.4.0",
@@ -39,6 +41,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "typescript": "~4.7.2"
+    "typescript": "~4.7.2",
+    "wait-on": "6.0.1",
+    "npm-run-all": "4.1.5"
   }
 }

@@ -4,13 +4,14 @@ import { SerialPortsComponent } from './serial-ports.component';
 import { RouterModule } from '@angular/router';
 
 
-
 @NgModule({
   declarations: [
     SerialPortsComponent
   ],
   exports: [
     SerialPortsComponent
+  ],
+  providers: [
   ],
   imports: [
     RouterModule.forChild([{
